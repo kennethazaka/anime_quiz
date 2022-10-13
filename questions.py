@@ -19,7 +19,7 @@ qnas = [
     {'results': [{
         'correct_answer': 'Yukine',
         'incorrect_answers': ['Karuha', 'Mineha', 'Mayu'],
-        'question': 'In the anime Noragami who is one of the main protagonists?'
+        'question': 'In the anime "Noragami", who is one of the main protagonists?'
     }]},
     {'results': [{
         'correct_answer': 'Osamu Tezuka',
