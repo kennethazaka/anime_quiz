@@ -1,10 +1,13 @@
-# import modules, 'random' and 'time'
-import random as r
+# import modules: random, json, requests and html
+import random as ra
+import json as j
+import requests as re
+import html as h
 from questions import qnas
 
 # loop to ask if the user wants to play again
 while True:
-    r.shuffle(qnas)
+    ra.shuffle(qnas)
 
     # blank space
     print()
@@ -22,13 +25,10 @@ while True:
         print(question)
         
         # define answers
-        answers = [
-            qnas[n]['results'][0]['correct_answer'],
-            qnas[n]['results'][0]['incorrect_answers'][0],
-            qnas[n]['results'][0]['incorrect_answers'][1],
-            qnas[n]['results'][0]['incorrect_answers'][2]
-        ]
-        r.shuffle(answers)
+        answers = qnas[n]['results'][0]['incorrect_answers']
+        correct_answer = qnas[n]['results'][0]['correct_answer']
+        answers.append(correct_answer)
+        ra.shuffle(answers)
 
         # define options
         options = {
