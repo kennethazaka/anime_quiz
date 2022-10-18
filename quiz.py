@@ -1,81 +1,72 @@
 # import modules: random, json, requests and html
-import random as ra
-import json as j
-import requests as re
-import html as h
-from questions import qnas
+import random
+import json
+import requests
+import html
 
 # loop to ask if the user wants to play again
 while True:
-    ra.shuffle(qnas)
-
-    # blank space
-    print()
-    n = 0
-    no_question = 0 # question number
-    correct = 0     # number of correct answers
-
-    # loop to count correct answers and number of questions asked
-    while no_question < 5:
-        print('-----------------------------------------------------')
-        # define question
-        question = qnas[n]['results'][0]['question']
-
-        # print question
-        print(question)
+    url = "https://opentdb.com/api.php?amount=1&category=31&type=multiple"
+    q_no = 0
+    correct = 0
+    # loop for no of questions
+    while q_no < 5:
+        link = requests.get(url)
+        # if the url is unreachable for some reason
+        if link.status_code != 200:
+            print("Sorry, there was a problem retrieving the question. Press enter to try again or type 'no' to quit the game.")
+        else:
+            print('###################################################')
+            qnas = json.loads(link.text)
+            question = qnas['results'][0]['question']
+            answers = qnas['results'][0]['incorrect_answers']
+            correct_answer = html.unescape(qnas['results'][0]['correct_answer'])
+            answers.append(correct_answer)
+            random.shuffle(answers)
+            options = {
+                'A': f'{html.unescape(answers[0])}',
+                'B': f'{html.unescape(answers[1])}',
+                'C': f'{html.unescape(answers[2])}',
+                'D': f'{html.unescape(answers[3])}'
+            }
         
-        # define answers
-        answers = qnas[n]['results'][0]['incorrect_answers']
-        correct_answer = qnas[n]['results'][0]['correct_answer']
-        answers.append(correct_answer)
-        ra.shuffle(answers)
+            print(f"{html.unescape(question)}")
+            print(f'''
+        A - {options.get('A')}
+        B - {options.get('B')}
+        C - {options.get('C')}
+        D - {options.get('D')}
+            ''')
 
-        # define options
-        options = {
-            'A': f'{answers[0]}',
-            'B': f'{answers[1]}',
-            'C': f'{answers[2]}',
-            'D': f'{answers[3]}'
-        }
-
-        # print options
-        print(f'''
-    A - {options.get("A")}
-    B - {options.get("B")}
-    C - {options.get("C")}
-    D - {options.get("D")}    
-        ''')
-
-        # validate user's input to prevent wrong input data types and letters that aren't a,b,c or d
+        # ask and validate user's input
         data_valid = False
         while data_valid == False:
-            user_ans = input("Your answer: ").upper()
+            user_ans = input('Your answer: ').upper()
             try:
                 user_ans = str(user_ans)
             except:
                 print('Invalid input')
                 continue
-            if (user_ans in options):
+            if user_ans in options:
                 data_valid = True
-            else:
+            else: 
                 print('Invalid input')
-        
+
         # check if answer is correct
-        if options.get(user_ans) == qnas[n]['results'][0]['correct_answer']:
+        if options.get(user_ans) == correct_answer:
             print('CORRECT')
             correct += 1
         else:
             print('WRONG')
+        print(f'The correct answer is: {correct_answer}')
 
-        no_question += 1    # increment number of questions
-        n += 1
-        # end of loop
-    print('-----------------------------------------------------')
-    print(f'You got {correct}/{no_question} questions correctly')
+        q_no += 1   # increment question number
+
+    print('###################################################')
+    print(f'You got {correct}/{q_no} questions correctly')
 
     play_again = input("Will you like to play again? Type 'no' to quit: ").lower()
     if play_again == "no":
         break
 
 print('GAME OVER!!! Thanks for playing :)')
-# END OF CODE
